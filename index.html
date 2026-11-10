@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Size Finder Widget · Demo</title>
+<style>
+  body{margin:0;background:#f6f3ee;color:#111;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
+  .wrap{max-width:1040px;margin:0 auto;padding:48px 16px}
+  h1{font-size:clamp(32px,5vw,52px);letter-spacing:-.04em;margin:0 0 8px}
+  .lead{color:#77736c;margin:0 0 40px;font-size:17px}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:start}
+  .product{background:#fff;border-radius:20px;padding:28px}
+  .ph{aspect-ratio:4/5;border-radius:14px;background:#ebe6de url("https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=800&q=80") center/cover}
+  .product h2{font-size:22px;margin:18px 0 4px;letter-spacing:-.02em}
+  .product .p{color:#77736c;margin:0 0 16px}
+  .sizes{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+  .sizes label input{display:none}
+  .sizes label span{display:inline-block;min-width:46px;text-align:center;padding:10px 0;border-radius:10px;background:#f1eee9;cursor:pointer}
+  .sizes label input:checked+span{background:#111;color:#fff}
+  .langs{display:flex;gap:6px;margin-bottom:16px}
+  .langs button{all:unset;cursor:pointer;padding:8px 14px;border-radius:999px;background:#fff;font-size:14px}
+  .langs button.on{background:#111;color:#fff}
+  footer{margin-top:48px;font-size:14px;color:#77736c}
+  footer a{color:#111}
+  @media(max-width:800px){.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Size Finder Widget</h1>
+  <p class="lead">Free drop-in size recommender for clothing stores. One script tag, no dependencies.</p>
+
+  <div class="grid">
+    <div>
+      <div class="langs" id="langs">
+        <button class="on" data-l="en">English</button><button data-l="fr">Français</button><button data-l="ar">العربية</button>
+      </div>
+      <size-finder id="sf" lang="en"></size-finder>
+    </div>
+
+    <div class="product">
+      <div class="ph"></div>
+      <h2>Essential Cotton Tee</h2>
+      <p class="p">2 900 DA</p>
+      <div class="sizes" id="sizes"></div>
+      <size-finder mode="button" lang="en"></size-finder>
+    </div>
+  </div>
+
+  <footer>Open source under MIT · Built by <a href="https://www.instagram.com/malak_labs/">Malak Labs</a></footer>
+</div>
+
+<script src="size-finder.js"></script>
+<script>
+  var sizes = ['XS','S','M','L','XL','XXL'];
+  document.getElementById('sizes').innerHTML = sizes.map(function (s) {
+    return '<label><input type="radio" name="size" value="' + s + '"' + (s === 'M' ? ' checked' : '') + '><span>' + s + '</span></label>';
+  }).join('');
+
+  // Any widget on the page: select the recommended size on the product
+  document.addEventListener('size-selected', function (e) {
+    var r = document.querySelector('#sizes input[value="' + e.detail.size + '"]');
+    if (r) r.checked = true;
+  });
+
+  document.querySelectorAll('#langs button').forEach(function (b) {
+    b.onclick = function () {
+      document.querySelectorAll('#langs button').forEach(function (x) { x.classList.toggle('on', x === b); });
+      document.querySelectorAll('size-finder').forEach(function (sf) { sf.setAttribute('lang', b.dataset.l); });
+    };
+  });
+</script>
+</body>
+</html>
